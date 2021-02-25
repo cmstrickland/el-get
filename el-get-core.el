@@ -500,8 +500,10 @@ makes it easier to conditionally splice a command into the list.
               ;; async case
               (el-get-verbose-message "Running commands asynchronously: %S" commands)
               (let* ((startf (if shell #'start-process-shell-command #'start-process))
+                     (cmd (cons program args))
+                     (cmdlist (if shell (list (s-join " " cmd)) cmd))
                      (process-connection-type nil) ; pipe, don't pretend we're a pty
-                     (proc (apply startf cname cbuf program args)))
+                     (proc (apply startf cname cbuf cmdlist)))
                 ;; add the properties to the process, then set the sentinel
                 (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
                 (process-put proc :el-get-sources el-get-sources)
